@@ -1,0 +1,46 @@
+
+# data for imagenet
+pycls/datasets/data/cifar-10*
+pycls/datasets/data/cifar*
+
+metric/datasets/data/*
+metric/datasets/data/imagenet
+
+# classification/ from  https://github.com/pytorch/vision/blob/main/references/classification/train.py
+classification/
+
+# uv related
+pyproject.toml
+uv.lock
+.python-version
+
+# other_data
+other_data
+
+# __pycache__
+**/__pycache__
+
+
+# test_**.ipynb
+**/test_**.ipynb
+
+# ./output
+output/
+output_*/
+
+# log
+log*
+logs/
+
+
+#.vscode/
+.vscode/
+
+# imagenet
+**/imagenet/**
+
+# logs
+log_*
+
+# pretrained/
+pretrained/

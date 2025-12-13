@@ -1,0 +1,41 @@
+MODEL:
+  TYPE: mobilenetmock
+  NUM_CLASSES: 10
+  RANS: [3, 3, 5, 5, 5, 5, 3, 3, 4, 2, 5, 1, 2, 4, 5, 3, 4]
+  HEADS:
+    NAME: "LinearHead"
+    NUM_CLASSES: 10
+    IN_FEAT: 960
+    REDUCTION_DIM: 960
+    POOL_LAYER: "avgpool"
+    CLS_LAYER: "linear"
+    MARGIN: 0.15
+    SCALE: 30
+BN:
+  ZERO_INIT_FINAL_GAMMA: True
+OPTIM:
+  BASE_LR: 0.16
+  LR_POLICY: steps
+  STEPS: [0, 100, 110, 120]
+  LR_MULT: 0.1
+  MAX_EPOCH: 120
+  MOMENTUM: 0.9
+  NESTEROV: True
+  WEIGHT_DECAY: 0.0001
+TRAIN:
+  DATASET: cifar10
+  SPLIT: train
+  BATCH_SIZE: 1024
+  IM_SIZE: 32
+  EVAL_PERIOD: 1
+TEST:
+  DATASET: cifar10
+  SPLIT: test
+  BATCH_SIZE: 1000
+  IM_SIZE: 32
+NUM_GPUS: 8
+DATA_LOADER:
+  NUM_WORKERS: 4
+CUDNN:
+  BENCHMARK: True
+OUT_DIR: .
