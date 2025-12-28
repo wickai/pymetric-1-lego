@@ -44,3 +44,6 @@ log_*
 
 # pretrained/
 pretrained/
+
+# .venv
+.venv

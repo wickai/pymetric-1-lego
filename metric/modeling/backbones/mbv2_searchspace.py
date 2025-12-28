@@ -119,15 +119,22 @@ class MobileNetV2(nn.Module):
 
         self._ops = {}
         for k in (3, 5):
-            for r in (2, 4, 6, 8):
+            for r in (1, 2, 4, 6):
                 # if k == 5 and r >= 8:
                 #     continue
                 base = f"mbconv_{k}x{k}_r{r}"
                 self._ops[base] = mb(k, r, se=False)
                 self._ops[base + "_se"] = mb(k, r, se=True)
 
+        # self._ops["skip_connect"] = (
+        #     lambda i, o, s, t: nn.Identity() if s == 1 and i == o else Zero(s, o)
+        # )
+        # 改为投影残差（不匹配时 1x1 Conv-BN）而非 Zero
         self._ops["skip_connect"] = (
-            lambda i, o, s, t: nn.Identity() if s == 1 and i == o else Zero(s, o)
+            lambda i, o, s, t: nn.Identity() if s == 1 and i == o else nn.Sequential(
+                nn.Conv2d(i, o, 1, stride=s, bias=False),
+                nn.BatchNorm2d(o)
+            )
         )
         self._ops["zero"] = lambda i, o, s, t: Zero(s, o)
         self.op_list = list(op_list)
@@ -152,15 +159,15 @@ class MobileNetSearchSpace:
     # 21 larers
     _STAGE_SETTING = [
         # t, c, n, s
-        # [1, 16, 1, 1], 
-        [6, 24, 2, 2],
-        [6, 32, 3, 2],
+        [1, 16, 1, 1], 
+        [6, 24, 2, 1],
+        [6, 32, 3, 1],
         [6, 64, 4, 2],
         [6, 96, 4, 1], #+1
         [6, 160, 5, 2], #+2
         [6, 320, 2, 1], #+1
     ]
-    _WIDTH_CHOICES = [1.2] # flops drops
+    _WIDTH_CHOICES = [0.5, 0.75, 1.0] # flops drops
     # 25 layers 450 flops human design (base from 21-layer)
     # _STAGE_SETTING = [
     #     # t, c, n, s
@@ -191,12 +198,12 @@ class MobileNetSearchSpace:
     def _default_op_list():
         ops = []
         for k in (3, 5):
-            for r in (2, 4, 6, 8): # r = [1,2,4,6]
+            for r in (1, 2, 4, 6): # r = [1,2,4,6]
                 # if k == 5 and r >= 8:
                 #     continue
                 ops += [f"mbconv_{k}x{k}_r{r}"]
                 ops += [f"mbconv_{k}x{k}_r{r}_se"]
-        ops += ["skip_connect", "zero"]
+        ops += ["skip_connect"]
         return ops
 
     def __init__(self, num_classes=10, small_input=True):
