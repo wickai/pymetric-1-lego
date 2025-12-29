@@ -4,7 +4,12 @@
 #     PORT 12001
 
 
-uv run python -m tools.metric.train_metric \
-    --cfg configs/legonas/MbV2Nas_cifar2imagenet_4card_5blk.yaml \
-    OUT_DIR ./output/legonas/MbV2Nas_cifar2imagenet_4card_5blk_re \
-    PORT 12005
+# uv run python -m tools.metric.train_metric \
+#     --cfg configs/legonas/MbV2Nas_cifar2imagenet_4card_5blk.yaml \
+#     OUT_DIR ./output/legonas/MbV2Nas_cifar2imagenet_4card_5blk_re \
+#     PORT 12005
+
+uv run python3 tools/metric/train_metric.py \
+    --cfg configs/nas/MbV2Nas_lw_imagenet_4card_5blk.yaml \
+    OUT_DIR ./output/legonas/MbV2Nas_imagenet2imagenet_4card_5blk \
+    PORT 12002

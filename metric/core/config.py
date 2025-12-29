@@ -31,6 +31,9 @@ _C.MODEL = CfgNode()
 # Model type
 _C.MODEL.TYPE = ""
 
+# Architecture JSON path for NAS models
+_C.MODEL.ARCH_JSON = ""
+
 # Number of weight layers
 _C.MODEL.DEPTH = 0
 
