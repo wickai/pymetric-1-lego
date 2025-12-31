@@ -311,6 +311,8 @@ _C.TRAIN = CfgNode()
 # Dataset and split
 _C.TRAIN.DATASET = ""
 _C.TRAIN.SPLIT = "train"
+_C.TRAIN.DATA_FORMAT = "default"
+_C.TRAIN.DATA_ROOT = ""
 
 # Total mini-batch size
 _C.TRAIN.BATCH_SIZE = 128
@@ -342,6 +344,8 @@ _C.TEST = CfgNode()
 # Dataset and split
 _C.TEST.DATASET = ""
 _C.TEST.SPLIT = "val"
+_C.TEST.DATA_FORMAT = "default"
+_C.TEST.DATA_ROOT = ""
 
 # Total mini-batch size
 _C.TEST.BATCH_SIZE = 200

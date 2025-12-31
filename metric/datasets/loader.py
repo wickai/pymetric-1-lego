@@ -8,7 +8,9 @@
 """Data loader."""
 
 import os
-os.environ["HF_DATASETS_CACHE"] = "/data/wk/kai/data/hf_cache"
+# Set HF cache to a large disk location if available, otherwise default
+if os.path.exists("/mnt/sda/weizixiang/wk/data"):
+    os.environ["HF_DATASETS_CACHE"] = "/mnt/sda/weizixiang/wk/data/hf_cache"
 
 import torch
 from metric.core.config import cfg
@@ -29,10 +31,39 @@ _DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 _PATHS = {"cifar10": "cifar10"}
 
 
-def load_imagenet_dataset(split: str):
+def load_imagenet_dataset(split: str, data_root: str = None, data_format: str = None):
     if split == 'validation':
         split = 'val'
-    local_path = os.path.join("/data/wk/kai/data/imagenet_arrow", split)
+
+    if data_format == 'parquet':
+        if not data_root:
+            raise ValueError("DATA_ROOT must be provided when DATA_FORMAT is 'parquet'")
+        
+        # Determine file prefix based on split
+        # User provided example shows 'train-*.parquet' and 'validation-*.parquet'
+        file_prefix = 'train' if split == 'train' else 'validation'
+        pattern = os.path.join(data_root, f"{file_prefix}-*.parquet")
+        
+        print(f"[Loading Parquet] Split: {split}, Pattern: {pattern}")
+        
+        # Load the dataset using Hugging Face datasets library
+        hf_dataset = load_dataset(
+            "parquet",
+            data_files={split: pattern},
+            split=split
+        )
+        return hf_dataset
+
+    # Default (Arrow/HuggingFace disk format)
+    # Use provided data_root or fall back to a default ONLY if necessary, but better to warn.
+    if data_root:
+        local_path = os.path.join(data_root, split)
+    else:
+        # Fallback to old hardcoded path only if data_root is missing (for backward compatibility)
+        # But we recommend setting DATA_ROOT in config.
+        local_path = os.path.join("/data/wk/kai/data/imagenet_arrow", split)
+        print(f"[Warning] DATA_ROOT not set. Using legacy default: {local_path}")
+
     print("local_path", local_path)
     if os.path.exists(local_path):
         print(f"[✓] 使用本地数据集: {local_path}")
@@ -56,7 +87,7 @@ def load_food101_dataset(split: str):
     return hf_dataset
 
 def _construct_loader(
-    dataset_name, split, batch_size, shuffle, drop_last, use_mixup_cutmix
+    dataset_name, split, batch_size, shuffle, drop_last, use_mixup_cutmix, data_root=None, data_format=None
 ):
     """Constructs the data loader for the given dataset."""
     if dataset_name.lower() == "cifar10":
@@ -67,7 +98,7 @@ def _construct_loader(
         # hf_dataset = load_dataset(
         #         path="/data/wk/kai/data/mirror/HuggingFace-Download-Accelerator/hf_hub/datasets--imagenet-1k", 
         #         data_dir="data",split=split)  # or "validation"
-        hf_dataset = load_imagenet_dataset(split)
+        hf_dataset = load_imagenet_dataset(split, data_root=data_root, data_format=data_format)
         dataset = HuggingFaceImageNetDataset(hf_dataset, split=split)
     elif dataset_name.lower() == "food101":
         hf_dataset = load_food101_dataset(split)
@@ -135,6 +166,8 @@ def construct_train_loader():
         shuffle=True,
         drop_last=True,
         use_mixup_cutmix=True,
+        data_root=cfg.TRAIN.DATA_ROOT,
+        data_format=cfg.TRAIN.DATA_FORMAT,
     )
 
 
@@ -147,6 +180,8 @@ def construct_test_loader():
         shuffle=False,
         drop_last=False,
         use_mixup_cutmix=False,
+        data_root=cfg.TEST.DATA_ROOT,
+        data_format=cfg.TEST.DATA_FORMAT,
     )
 
 

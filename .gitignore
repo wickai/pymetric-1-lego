@@ -29,7 +29,7 @@ output/
 output_*/
 
 # log
-log*
+# log*
 logs/
 
 

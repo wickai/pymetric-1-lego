@@ -8,6 +8,8 @@
 #     --cfg configs/legonas/MbV2Nas_cifar2imagenet_4card_5blk.yaml \
 #     OUT_DIR ./output/legonas/MbV2Nas_cifar2imagenet_4card_5blk_re \
 #     PORT 12005
+export PYMETRIC=`pwd`
+export PYTHONPATH=`pwd`:$PYTHONPATH
 
 uv run python3 tools/metric/train_metric.py \
     --cfg configs/nas/MbV2Nas_lw_imagenet_4card_5blk.yaml \

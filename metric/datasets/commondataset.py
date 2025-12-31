@@ -147,7 +147,16 @@ class HuggingFaceImageNetDataset(DataSet):
         while retry < max_retry:
             try:
                 data = self._hf_dataset[self._imdb[index]]
-                im = np.array(data["image"]).astype(np.float32)
+                image_data = data["image"]
+
+                # Check for Parquet/Arrow binary format (dict with 'bytes')
+                if isinstance(image_data, dict) and "bytes" in image_data:
+                    import io
+                    from PIL import Image
+                    im = Image.open(io.BytesIO(image_data["bytes"])).convert("RGB")
+                    im = np.array(im).astype(np.float32)
+                else:
+                    im = np.array(image_data).astype(np.float32)
 
                 # 修正通道数
                 if im.ndim == 2:

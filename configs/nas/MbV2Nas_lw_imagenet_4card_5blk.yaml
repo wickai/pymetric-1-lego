@@ -33,11 +33,15 @@ TRAIN:
   CHECKPOINT_PERIOD: 1
   EVAL_PERIOD: 1
   EMA_FLAG: False
+  DATA_FORMAT: parquet
+  DATA_ROOT: /mnt/sda/weizixiang/wk/data/imagenet_v2/datasets--imagenet-1k/data
 TEST:
   DATASET: imagenet
   SPLIT: validation
   BATCH_SIZE: 128
   IM_SIZE: 256
+  DATA_FORMAT: parquet
+  DATA_ROOT: /mnt/sda/weizixiang/wk/data/imagenet_v2/datasets--imagenet-1k/data
 NUM_GPUS: 4
 DATA_LOADER:
   NUM_WORKERS: 4
