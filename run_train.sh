@@ -12,6 +12,6 @@ export PYMETRIC=`pwd`
 export PYTHONPATH=`pwd`:$PYTHONPATH
 
 uv run python3 tools/metric/train_metric.py \
-    --cfg configs/nas/MbV2Nas_lw_imagenet_4card_5blk.yaml \
-    OUT_DIR ./output/legonas/MbV2Nas_imagenet2imagenet_4card_5blk \
+    --cfg configs/nas/MbV2Nas_lw_imagenet_4card_5blk_exp02.yaml \
+    OUT_DIR ./output/legonas/MbV2Nas_imagenet2imagenet_4card_5blk_exp02 \
     PORT 12002

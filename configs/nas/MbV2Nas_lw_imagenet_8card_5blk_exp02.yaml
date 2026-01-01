@@ -42,7 +42,7 @@ TEST:
   IM_SIZE: 256
   DATA_FORMAT: parquet
   DATA_ROOT: /mnt/sda/weizixiang/wk/data/imagenet_v2/datasets--imagenet-1k/data
-NUM_GPUS: 4
+NUM_GPUS: 8
 DATA_LOADER:
   NUM_WORKERS: 4
   MIXUP_ALPHA: 0.2
